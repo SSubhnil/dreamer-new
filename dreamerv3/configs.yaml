@@ -233,7 +233,7 @@ dmc_proprio:
   <<: *size12m
   task: dmc_walker_walk
   run.train_ratio: 512
-  run.steps: 3e5
+  run.steps: 5e5
   env.dmc.image: False
 
 dmc_vision:

@@ -5,6 +5,10 @@ import sys
 import warnings
 from functools import partial as bind
 
+# Set environment variables for GPU rendering
+os.environ['EGL_DEVICE_ID'] = '0'
+os.environ['MUJOCO_GL'] = 'egl'
+
 directory = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(directory.parent))
 sys.path.insert(0, str(directory.parent.parent))
