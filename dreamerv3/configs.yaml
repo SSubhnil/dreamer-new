@@ -23,7 +23,7 @@ defaults:
     jit: True
     compute_dtype: bfloat16
     param_dtype: float32
-    prealloc: True
+    prealloc: False
     checks: False
     logical_cpus: 0
     debug: False
