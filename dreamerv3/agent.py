@@ -21,7 +21,7 @@ sample = lambda dist: {
     k: v.sample(seed=nj.seed()) for k, v in dist.items()}
 
 
-@jaxagent.Wrapper
+@jaxagent.Wrapper #  Agent class is being passed as an argument to the Wrapper function defined in jaxagent.py
 class Agent(nj.Module):
 
   configs = yaml.YAML(typ='safe').load(
@@ -43,7 +43,7 @@ class Agent(nj.Module):
         not k.startswith('log_') and re.match(config.dec.spaces, k)}
     embodied.print('Encoder:', {k: v.shape for k, v in enc_space.items()})
     embodied.print('Decoder:', {k: v.shape for k, v in dec_space.items()})
-
+# Observation space
     # World Model
     self.enc = {
         'simple': bind(nets.SimpleEncoder, **config.enc.simple),
@@ -152,7 +152,7 @@ class Agent(nj.Module):
             obs=obs, prevlat=prevlat, prevact=prevact,
             embed=embed, act=act, out=out, lat=lat,
         ))}
-
+# behavior
     assert all(
         k in outs for k in self.aux_spaces
         if k not in ('stepid', 'finite', 'is_online')), (

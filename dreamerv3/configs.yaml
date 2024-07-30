@@ -41,7 +41,7 @@ defaults:
     script: train
     steps: 1e10
     duration: 0
-    num_envs: 16
+    num_envs: 1
     num_envs_eval: 4
     expl_until: 0
     log_every: 120
@@ -226,6 +226,21 @@ crafter:
     log_video_fps: 10
     train_ratio: 512
     steps: 1.1e6
+  enc.spaces: 'image'
+  dec.spaces: 'image'
+
+gymnasium:
+  <<: *size12m
+  task: gym_highway-v0
+  run.train_ratio: 512
+  run.steps: 5e5
+  env.dmc.image: False
+
+gymnasium_vision:
+  <<: *size12m
+  task: gym_highway-v0
+  run.train_ratio: 512
+  run.steps: 6e5
   enc.spaces: 'image'
   dec.spaces: 'image'
 
