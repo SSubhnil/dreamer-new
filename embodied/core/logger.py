@@ -388,6 +388,8 @@ def _encode_gif(frames, fps):
     proc.stdin.write(image.tobytes())
   out, err = proc.communicate()
   if proc.returncode:
-    raise IOError('\n'.join([' '.join(cmd), err.decode('utf8')]))
+    error_message = err.decode('utf8')
+    print(f"FFmpeg error: {error_message}")
+    raise IOError('\n'.join([' '.join(cmd), error_message]))
   del proc
   return out

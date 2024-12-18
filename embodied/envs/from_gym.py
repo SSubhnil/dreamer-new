@@ -2,6 +2,7 @@ import functools
 import embodied
 import gymnasium as gym
 import numpy as np
+import minigrid
 
 highway_config = {
     "observation": {
@@ -84,7 +85,8 @@ class FromGym(embodied.Env):
             action = self._unflatten(action)
         else:
             action = action[self._act_key]
-        obs, reward, self._done, trunc, self._info = self._env.step(action)
+        obs, reward, terminate, truncate, self._info = self._env.step(action)
+        self._done = terminate or truncate
         return self._obs(
             obs, reward,
             is_last=bool(self._done),
@@ -98,7 +100,7 @@ class FromGym(embodied.Env):
         # Convert observations to match the expected data type and shape
         for k, v in obs.items():
             if k == self._obs_key:
-                obs[k] = v.astype(np.float32) / 255.0  # Normalize if it's image data
+                obs[k] = np.asarray(v, dtype=np.uint8)  # Keep it in uint8 format
             else:
                 obs[k] = np.asarray(v, dtype=np.float32)
 

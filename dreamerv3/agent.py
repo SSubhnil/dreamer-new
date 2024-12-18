@@ -20,7 +20,7 @@ cast = jaxutils.cast_to_compute
 sample = lambda dist: {
     k: v.sample(seed=nj.seed()) for k, v in dist.items()}
 
-
+# disag
 @jaxagent.Wrapper #  Agent class is being passed as an argument to the Wrapper function defined in jaxagent.py
 class Agent(nj.Module):
 
@@ -133,12 +133,16 @@ class Agent(nj.Module):
     obs = self.preprocess(obs)
     embed = self.enc(obs, bdims=1)
     prevact = jaxutils.onehot_dict(prevact, self.act_space)
+
+    # out is a dict that includes out['stoch'] and out['deter'] -> represent the latent state
     lat, out = self.dyn.observe(
         prevlat, prevact, embed, obs['is_first'], bdims=1)
     actor = self.actor(out, bdims=1)
     act = sample(actor)
 
     outs = {}
+    outs['latent_stoch'] = out['stoch']
+    outs['latent_deter'] = out['deter']
     if self.config.replay_context:
       outs.update({k: out[k] for k in self.aux_spaces if k != 'stepid'})
       outs['stoch'] = jnp.argmax(outs['stoch'], -1).astype(jnp.int32)
@@ -193,6 +197,10 @@ class Agent(nj.Module):
     metrics.update(mets)
     self.updater()
     outs = {}
+    if 'replay_outs' in out:
+        if 'stoch' in out['replay_outs'] and 'deter' in out['replay_outs']:
+            outs['latent_stoch'] = out['replay_outs']['stoch']
+            outs['latent_deter'] = out['replay_outs']['deter']
 
     if self.config.replay_context:
       outs['replay'] = {'stepid': stepid}

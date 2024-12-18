@@ -238,7 +238,7 @@ gymnasium:
 
 gymnasium_vision:
   <<: *size12m
-  task: gym_highway-v0
+  task: gym_MiniGrid-Playground-v0
   run.train_ratio: 512
   run.steps: 6e5
   enc.spaces: 'image'

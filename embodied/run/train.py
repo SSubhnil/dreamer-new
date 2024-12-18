@@ -1,10 +1,10 @@
 import re
 from collections import defaultdict
 from functools import partial as bind
-
+import numpy as np
 import embodied
 import numpy as np
-
+import os
 
 def train(make_agent, make_replay, make_env, make_logger, args):
 
@@ -89,6 +89,12 @@ def train(make_agent, make_replay, make_env, make_logger, args):
       if 'replay' in outs:
         replay.update(outs['replay'])
       agg.add(mets, prefix='train')
+
+      if 'latent_stoch' in outs and 'latent_deter' in outs:
+        # Construct a filepath using args.logdir or a fixed directory
+        filepath = os.path.join(args.logdir, "latent_Walker_RUN_", "latent_step_{:010d}.npz".format(int(step)))
+        log_latent({'stoch': outs['latent_stoch'], 'deter': outs['latent_deter']}, filepath)
+
   driver.on_step(train_step)
 
   checkpoint = embodied.Checkpoint(logdir / 'checkpoint.ckpt')
@@ -126,3 +132,18 @@ def train(make_agent, make_replay, make_env, make_logger, args):
       checkpoint.save()
 
   logger.close()
+
+import numpy as np
+
+
+def log_latent(latent_dict, filepath):
+  # Ensure directory exists
+  os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+  # Convert latent arrays to numpy
+  stoch = np.array(latent_dict['stoch'])
+  deter = np.array(latent_dict['deter'])
+
+  # Save to the specified filepath as an npz file
+  np.savez(filepath, stoch=stoch, deter=deter)
+
